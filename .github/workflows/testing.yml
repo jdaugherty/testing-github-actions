@@ -1,0 +1,39 @@
+name: "Testing Pages Deploy"
+on:
+  workflow_dispatch:
+jobs:
+  testing_job:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      # - name: 'snapshot - doc folder - should fail'
+      #   uses: jdaugherty/grails-github-actions/deploy-github-pages@main
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     GRADLE_PUBLISH_RELEASE: 'false'
+      #     SOURCE_FOLDER: 'docs'
+      #     VERSION: 'foo'
+      # - name: 'snapshot - nested doc folder'
+      #   uses: jdaugherty/grails-github-actions/deploy-github-pages@main
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     GRADLE_PUBLISH_RELEASE: 'false'
+      #     SOURCE_FOLDER: 'docs'
+      #     TARGET_SUBFOLDER: 'aTargetFolder'
+      #     VERSION: '7.2.x'
+      - name: 'snapshot - no version - should fail'
+        uses: jdaugherty/grails-github-actions/deploy-github-pages@main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GRADLE_PUBLISH_RELEASE: 'false'
+          SOURCE_FOLDER: 'docs'
+      - name: 'snapshot - no nested folder'
+        uses: jdaugherty/grails-github-actions/deploy-github-pages@main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GRADLE_PUBLISH_RELEASE: 'false'
+          SOURCE_FOLDER: 'docs'
+          VERSION: '7.2.x'
