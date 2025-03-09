@@ -24,16 +24,15 @@ jobs:
       #     SOURCE_FOLDER: 'docs'
       #     TARGET_SUBFOLDER: 'aTargetFolder'
       #     VERSION: '7.2.x'
-      - name: 'snapshot - no version - should not fail on 7.0.x branch'
-        uses: jdaugherty/grails-github-actions/deploy-github-pages@main
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GRADLE_PUBLISH_RELEASE: 'false'
-          SOURCE_FOLDER: 'docs'
-      # - name: 'snapshot - no nested folder'
+      # - name: 'snapshot - no version - should not fail on 7.0.x branch'
       #   uses: jdaugherty/grails-github-actions/deploy-github-pages@main
       #   env:
       #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       #     GRADLE_PUBLISH_RELEASE: 'false'
       #     SOURCE_FOLDER: 'docs'
-      #     VERSION: '7.2.x'
+      - name: 'release - no nested folder'
+        uses: jdaugherty/grails-github-actions/deploy-github-pages@main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GRADLE_PUBLISH_RELEASE: 'true'
+          SOURCE_FOLDER: 'docs'
