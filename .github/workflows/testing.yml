@@ -30,9 +30,16 @@ jobs:
       #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       #     GRADLE_PUBLISH_RELEASE: 'false'
       #     SOURCE_FOLDER: 'docs'
-      - name: 'release - no nested folder'
+      # - name: 'release - no nested folder'
+      #   uses: jdaugherty/grails-github-actions/deploy-github-pages@main
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     GRADLE_PUBLISH_RELEASE: 'true'
+      #     SOURCE_FOLDER: 'docs'
+      - name: 'release - nested doc folder'
         uses: jdaugherty/grails-github-actions/deploy-github-pages@main
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GRADLE_PUBLISH_RELEASE: 'true'
           SOURCE_FOLDER: 'docs'
+          TARGET_SUBFOLDER: 'aTargetFolder'
