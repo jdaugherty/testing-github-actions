@@ -44,9 +44,9 @@ jobs:
       #     SOURCE_FOLDER: 'docs'
       #     TARGET_SUBFOLDER: 'aTargetFolder'
       - name: 'release - disabled purge'
-        uses: jdaugherty/grails-github-actions/deploy-github-pages@main
+        uses: jdaugherty/grails-github-actions/deploy-github-pages@skipIfNotHighest
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GRADLE_PUBLISH_RELEASE: 'true'
           SOURCE_FOLDER: 'docs'
-          PURGE_EXISTING: 'false'
+          PURGE_EXISTING: 'true'
