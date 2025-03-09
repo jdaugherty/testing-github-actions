@@ -49,4 +49,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GRADLE_PUBLISH_RELEASE: 'true'
           SOURCE_FOLDER: 'docs'
-          PURGE_EXISTING: 'false'
+          PURGE_EXISTING: 'true'
