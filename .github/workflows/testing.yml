@@ -1,6 +1,7 @@
 name: "Testing Post Release"
 on:
-  workflow_dispatch:
+  release:
+    types: [published]
 jobs:
   testing_job:
     runs-on: ubuntu-latest
