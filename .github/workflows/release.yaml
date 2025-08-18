@@ -48,7 +48,7 @@ jobs:
         id: release_version
         run: echo "value=${GITHUB_REF:11}" >> $GITHUB_OUTPUT
       - name: '⚙️ Run pre-release'
-        uses: apache/grails-github-actions/pre-release@asf
+        uses: jdaugherty/grails-github-actions/pre-release@pr-troubleshooting
         env:
           RELEASE_VERSION: ${{ steps.release_version.outputs.value }}
       - name: "Generate Build Date file"
@@ -77,4 +77,4 @@ jobs:
       - name: 'Ensure Common Build Date' # to ensure a reproducible build
         run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> "$GITHUB_ENV"
       - name: "⚙️ Run post-release"
-        uses: apache/grails-github-actions/post-release@asf
+        uses: jdaugherty/grails-github-actions/post-release@pr-troubleshooting

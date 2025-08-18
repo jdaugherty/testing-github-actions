@@ -12,4 +12,4 @@ jobs:
         with:
           fetch-depth: 0
       - name: 'release - no nested folder'
-        uses: jdaugherty/grails-github-actions/post-release@asf
+        uses: jdaugherty/grails-github-actions/post-release@pr-troubleshooting
