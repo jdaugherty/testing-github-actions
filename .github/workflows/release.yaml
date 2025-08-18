@@ -1,0 +1,80 @@
+name: "Release"
+on:
+  release:
+    types: [ published ]
+permissions: { }
+env:
+  # to prevent throttling of the github api, include the github token in an environment variable since the build will check for it
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+jobs:
+  publish:
+    name: "Stage Files"
+    permissions:
+      contents: write  #  to create release & upload wrapper
+      issues: write  #  to modify milestones
+    runs-on: ubuntu-24.04
+    outputs:
+      release_version: ${{ steps.release_version.outputs.value }}
+      commit_hash: ${{ steps.commit_hash.outputs.value }}
+      target_branch: ${{ steps.extract_branch.outputs.value }}
+      extract_repository_name: ${{ steps.extract_repository_name.outputs.repository_name }}
+    steps:
+      - name: "Output Agent IP" # in the event RAO blocks this agent, this can be used to debug it
+        run: curl -s https://api.ipify.org
+      - name: "Extract repository name"
+        id: extract_repository_name
+        run: |
+          echo "repository_name=${GITHUB_REPOSITORY##*/}" >> $GITHUB_OUTPUT
+      - name: "📥 Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.ref }}
+          fetch-depth: 1
+          fetch-tags: true
+      - name: 'Ensure Common Build Date' # to ensure a reproducible build
+        run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> "$GITHUB_ENV"
+      - name: "Ensure source files use common date"
+        run: |
+          find . -depth \( -type f -o -type d \) -exec touch -d "@${SOURCE_DATE_EPOCH}" {} +
+      - name: "📝 Store the target branch"
+        id: extract_branch
+        run: |
+          echo "Determining Target Branch"
+          TARGET_BRANCH=`cat $GITHUB_EVENT_PATH | jq '.release.target_commitish' | sed -e 's/^"\(.*\)"$/\1/g'`
+          echo $TARGET_BRANCH
+          echo "value=${TARGET_BRANCH}" >> $GITHUB_OUTPUT
+      - name: "📝 Store the current release version"
+        id: release_version
+        run: echo "value=${GITHUB_REF:11}" >> $GITHUB_OUTPUT
+      - name: '⚙️ Run pre-release'
+        uses: apache/grails-github-actions/pre-release@asf
+        env:
+          RELEASE_VERSION: ${{ steps.release_version.outputs.value }}
+      - name: "Generate Build Date file"
+        run: echo "$SOURCE_DATE_EPOCH" >> build/BUILD_DATE.txt
+      - name: "Upload Build Date file"
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/BUILD_DATE.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  release:
+    name: "Close Release"
+    environment: release
+    needs: [ publish ]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write # required for gradle.properties revert
+      issues: write # required for milestone closing
+      pull-requests: write # to open PR
+    steps:
+      - name: "📥 Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: v${{ needs.publish.outputs.release_version }}
+      - name: 'Ensure Common Build Date' # to ensure a reproducible build
+        run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> "$GITHUB_ENV"
+      - name: "⚙️ Run post-release"
+        uses: apache/grails-github-actions/post-release@asf
